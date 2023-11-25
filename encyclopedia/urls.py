@@ -7,4 +7,5 @@ urlpatterns = [
     path("<title>", views.entry_by_title, name="entry_by_title"),
     path("search/", views.search, name="search"),
     path("new_entry/", views.new_entry, name="new_entry"),
+    path("<title>/edit/", views.edit, name="edit"),
 ]

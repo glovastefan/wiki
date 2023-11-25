@@ -8,18 +8,23 @@ def index(request):
 
 
 def entry_by_title(request, title):
-    return render(
-        request,
-        "encyclopedia/view_entry.html",
-        {"entry": util.get_entry(title=title), "title": title},
-    )
+    if request.method == "POST":
+        return render(request, "encyclopedia/edit.html", {
+            "title": title
+        })
+    else:
+        return render(
+            request,
+            "encyclopedia/view_entry.html",
+            {"entry": util.get_entry(title=title), "title": title},
+        )
 
 
 def search(request):
     if request.method == "POST":
         search_entry = request.POST.get("q", None)
         all_entries = util.list_entries()
-        if search_entry in all_entries:
+        if search_entry in [title.lower() for title in util.list_entries()]:
             return entry_by_title(request, title=search_entry)
         else:
             to_display = [
@@ -56,3 +61,16 @@ def new_entry(request):
 
     else:
         return render(request, "encyclopedia/new_page.html")
+
+def edit(request, title):
+    if request.method == "POST":
+        edited_entry = request.POST.get("new_entry_text")
+        util.save_entry(title, edited_entry)
+        return render(
+            request,
+            "encyclopedia/view_entry.html",
+            {"entry": util.get_entry(title=title), "title": title}
+        )
+    else:
+        return render(request, "encyclopedia/edit.html",
+            {"entry": util.get_entry(title=title), "title": title})
