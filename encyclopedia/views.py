@@ -27,9 +27,32 @@ def search(request):
             ]
             if to_display:
                 return render(
-                    request, "encyclopedia/index.html", {"entries": to_display}
+                    request, "encyclopedia/index.html", {"entries": to_display, "search": True}
                 )
             else:
                 return entry_by_title(request, title=search_entry)
     else:
         return render(request, "encyclopedia/index.html")
+    
+def new_entry(request):
+    if request.method == "POST":
+        new_title = request.POST.get("new_title")
+        new_page = request.POST.get("new_entry_text")
+        if not new_title:
+            return render(request, "encyclopedia/error.html", {
+                "error_message": "Title must be provided"
+            })
+        else:
+            all_entries = [title.lower() for title in util.list_entries()]
+            if new_title.lower() in all_entries:
+                return render(request, "encyclopedia/error.html", {
+                    "error_message": f"Title {new_title} already exist!"
+                })
+            else:
+                with open(f"entries/{new_title}.md", "w") as new_file:
+                    print(f"# {new_title}\n", file=new_file)
+                    print(f"{new_page}", file=new_file)
+                return render(request, "encyclopedia/new_page.html")
+
+    else:
+        return render(request, "encyclopedia/new_page.html")
