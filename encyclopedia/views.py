@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+import markdown2
 from . import util
 
 
@@ -13,10 +13,11 @@ def entry_by_title(request, title):
             "title": title
         })
     else:
+        entry = markdown2.markdown(util.get_entry(title=title))
         return render(
             request,
             "encyclopedia/view_entry.html",
-            {"entry": util.get_entry(title=title), "title": title},
+            {"entry": entry, "title": title}
         )
 
 
