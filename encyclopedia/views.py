@@ -74,3 +74,12 @@ def edit(request, title):
     else:
         return render(request, "encyclopedia/edit.html",
             {"entry": util.get_entry(title=title), "title": title})
+
+def random(request):
+    import random
+    random_entry = random.choice(util.list_entries())
+    return render(
+            request,
+            "encyclopedia/view_entry.html",
+            {"entry": util.get_entry(title=random_entry), "title": random_entry},
+        )
